@@ -523,7 +523,11 @@ class RestSession(object):
 
         response = self.request("PUT", url, erc, json=json, data=data,
                                 **kwargs)
-        return extract_and_parse_json(response)
+
+        if erc == 204:
+            return "204 Successful"
+        else:
+            return extract_and_parse_json(response)
 
     def delete(self, url, **kwargs):
         """Sends a DELETE request.

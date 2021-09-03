@@ -1,25 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Webex Teams People API wrapper.
-
-Copyright (c) 2016-2020 Cisco and/or its affiliates.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+"""Webex Teams Devices API wrapper.
 """
 
 
@@ -42,14 +22,14 @@ from ..utils import (
 )
 
 
-API_ENDPOINT = 'people'
-OBJECT_TYPE = 'person'
+API_ENDPOINT = 'devices'
+OBJECT_TYPE = 'device'
 
 
-class PeopleAPI(object):
+class DevicesAPI(object):
     """Webex Teams People API.
 
-    Wraps the Webex Teams People API and exposes the API as native Python
+    Wraps the Webex Teams Devices API and exposes the API as native Python
     methods that return native Python objects.
 
     """
@@ -67,35 +47,19 @@ class PeopleAPI(object):
         """
         check_type(session, RestSession)
 
-        super(PeopleAPI, self).__init__()
+        super(DevicesAPI, self).__init__()
 
         self._session = session
         self._object_factory = object_factory
 
     @generator_container
-    def list(self, email=None, displayName=None, id=None, orgId=None, max=None, callingData=False,
-             **request_parameters):
-        """List people in your organization.
+    def list(self, personId=None, placeId=None, orgId=None, displayName=None, product=None, capability=None,
+             max=None, **request_parameters):
+        """List devices in your organization.
 
         For most users, either the `email` or `displayName` parameter is
         required. Admin users can omit these fields and list all users in their
         organization.
-
-        Response properties associated with a user's presence status, such as
-        `status` or `lastActivity`, will only be displayed for people within
-        your organization or an organization you manage. Presence information
-        will not be shown if the authenticated user has disabled status
-        sharing.
-
-        This method supports Webex Teams's implementation of RFC5988 Web
-        Linking to provide pagination support.  It returns a generator
-        container that incrementally yields all people returned by the
-        query.  The generator will automatically request additional 'pages' of
-        responses from Webex as needed until all responses have been returned.
-        The container makes the generator safe for reuse.  A new API call will
-        be made, using the same parameters that were specified when the
-        generator was created, every time a new iterator is requested from the
-        container.
 
         Args:
             email(basestring): The e-mail address of the person to be found.
@@ -119,30 +83,32 @@ class PeopleAPI(object):
 
         """
 
-        check_type(id, basestring, optional=True)
+        '''check_type(id, basestring, optional=True)
         check_type(email, basestring, optional=True)
         check_type(displayName, basestring, optional=True)
         check_type(orgId, basestring, optional=True)
-        check_type(max, int, optional=True)
+        check_type(max, int, optional=True)'''
 
         params = dict_from_items_with_values(
             request_parameters,
-            id=id,
-            email=email,
+            personId=personId,
+            placeId=placeId,
             displayName=displayName,
             orgId=orgId,
+            product=product,
+            capability=capability,
             max=max,
         )
 
 
         # API request - get items
-        items = self._session.get_items(API_ENDPOINT  + '?callingData=' + str(callingData), params=params)
+        items = self._session.get_items(API_ENDPOINT, params=params)
 
         # Yield person objects created from the returned items JSON objects
         for item in items:
             yield self._object_factory(OBJECT_TYPE, item)
 
-    def create(self, emails, displayName=None, firstName=None, lastName=None,
+    '''def create(self, emails, displayName=None, firstName=None, lastName=None,
                avatar=None, orgId=None, roles=None, licenses=None, locationId=None,
                callingData=False,
                **request_parameters):
@@ -347,47 +313,6 @@ class PeopleAPI(object):
         return self._object_factory(OBJECT_TYPE, json_data)
 
 
-    def update_voicemail(self, personId, enable_flag=False, notifications=None, orgId=None, **request_parameters):
-
-        check_type(orgId, basestring, optional=True)
-        #check_type(notifications, dict, optional=True)
-        check_type(enable_flag, bool, optional=True)
-
-        params = dict(orgId=orgId)
-
-        if enable_flag:
-            put_data = dict_from_items_with_values(
-                request_parameters,
-                enabled=enable_flag,
-                notifications=notifications)
-        else:
-            put_data = dict(enabled=enable_flag)
-
-        # API request
-        json_data = self._session.put(API_ENDPOINT + '/' + personId + '/features/voicemail',
-                                      params=params, json=put_data, erc = 204)
-
-
-
-        # Return a person object created from the returned JSON object
-        return "Success"
-
-
-    def update_forwarding(self, personId, callForwarding=None, businessContinuity=None, orgId=None):
-        #check_type(personId, basestring)
-        params = dict(orgId=orgId)
-        put_data = dict_from_items_with_values(
-            callForwarding=callForwarding,
-            businessContinuity=businessContinuity)
-        #exit(put_data)
-
-        # API request
-        json_data = self._session.put(API_ENDPOINT + '/' + personId + '/features/callForwarding',
-                                      params=params, json=put_data, erc = 204)
-
-        # Return a person object created from the returned JSON object
-        return "Success"
-
 
     def delete(self, personId):
         """Remove a person from the system.
@@ -418,4 +343,4 @@ class PeopleAPI(object):
         json_data = self._session.get(API_ENDPOINT + '/me')
 
         # Return a person object created from the response JSON data
-        return self._object_factory(OBJECT_TYPE, json_data)
+        return self._object_factory(OBJECT_TYPE, json_data)'''

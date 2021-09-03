@@ -42,7 +42,10 @@ from .licenses import LicensesAPI
 from .memberships import MembershipsAPI
 from .messages import MessagesAPI
 from .organizations import OrganizationsAPI
+from .locations import LocationsAPI
 from .people import PeopleAPI
+from .devices import DevicesAPI
+from .workspaces import WorkspacesAPI
 from .roles import RolesAPI
 from .rooms import RoomsAPI
 from .team_memberships import TeamMembershipsAPI
@@ -208,7 +211,10 @@ class WebexTeamsAPI(object):
         self.memberships = MembershipsAPI(self._session, object_factory)
         self.messages = MessagesAPI(self._session, object_factory)
         self.organizations = OrganizationsAPI(self._session, object_factory)
+        self.locations = LocationsAPI(self._session, object_factory)
         self.people = PeopleAPI(self._session, object_factory)
+        self.devices = DevicesAPI(self._session, object_factory)
+        self.workspaces = WorkspacesAPI(self._session, object_factory)
         self.roles = RolesAPI(self._session, object_factory)
         self.rooms = RoomsAPI(self._session, object_factory)
         self.teams = TeamsAPI(self._session, object_factory)
