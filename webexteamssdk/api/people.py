@@ -273,6 +273,54 @@ class PeopleAPI(object):
         # Return a person object created from the response JSON data
         return self._object_factory(OBJECT_TYPE, json_data)
 
+    def get_caller_id(self, personId):
+        """Get a person's caller ID details, by ID.
+
+        Args:
+            personId(basestring): The ID of the person to be retrieved.
+
+        Returns:
+            Person: A Person object with the details of the requested person.
+
+        Raises:
+            TypeError: If the parameter types are incorrect.
+            ApiError: If the Webex Teams cloud returns an error.
+
+        """
+        check_type(personId, basestring)
+
+        # API request
+        json_data = self._session.get(API_ENDPOINT + '/' + personId + '/features/callerId')
+
+        # Return a person object created from the response JSON data
+        return self._object_factory(OBJECT_TYPE, json_data)
+
+
+    def get_recording(self, personId):
+        """Get a person's call recording details, by ID.
+
+        Args:
+            personId(basestring): The ID of the person to be retrieved.
+
+        Returns:
+            Person: A Person object with the details of the requested person.
+
+        Raises:
+            TypeError: If the parameter types are incorrect.
+            ApiError: If the Webex Teams cloud returns an error.
+
+        """
+        check_type(personId, basestring)
+
+        # API request
+        #url = f"https://webexapis.com/v1/people/{person_id}/features/voicemail?orgId={org_id}"
+        json_data = self._session.get(API_ENDPOINT + '/' + personId + '/features/callRecording')
+
+        # Return a person object created from the response JSON data
+        return self._object_factory(OBJECT_TYPE, json_data)
+
+
+
     def update(self, personId, emails=None, displayName=None, firstName=None,
                lastName=None, avatar=None, orgId=None, roles=None, callingData=False,
                licenses=None, locationId=None, **request_parameters):
@@ -347,7 +395,17 @@ class PeopleAPI(object):
         return self._object_factory(OBJECT_TYPE, json_data)
 
 
-    def update_voicemail(self, personId, enable_flag=False, notifications=None, orgId=None, **request_parameters):
+    def update_voicemail(self, personId,
+                         enable_flag=False,
+                         notifications=None,
+                         emailCopyOfMessage=None,
+                         messageStorage=None,
+                         faxMessage=None,
+                         sendAllCalls=None,
+                         sendBusyCalls=None,
+                         sendUnansweredCalls=None,
+                         transferToNumber=None,
+                         orgId=None, **request_parameters):
 
         check_type(orgId, basestring, optional=True)
         #check_type(notifications, dict, optional=True)
@@ -359,10 +417,18 @@ class PeopleAPI(object):
             put_data = dict_from_items_with_values(
                 request_parameters,
                 enabled=enable_flag,
-                notifications=notifications)
+                notifications=notifications,
+                emailCopyOfMessage=emailCopyOfMessage,
+                messageStorage=messageStorage,
+                faxMessage=faxMessage,
+                sendAllCalls=sendAllCalls,
+                sendBusyCalls=sendBusyCalls,
+                sendUnansweredCalls=sendUnansweredCalls,
+                transferToNumber=transferToNumber,
+            )
         else:
             put_data = dict(enabled=enable_flag)
-
+        #print(put_data)
         # API request
         json_data = self._session.put(API_ENDPOINT + '/' + personId + '/features/voicemail',
                                       params=params, json=put_data, erc = 204)
@@ -388,6 +454,33 @@ class PeopleAPI(object):
         # Return a person object created from the returned JSON object
         return "Success"
 
+    def update_caller_id(self, personId, caller_id=None, orgId=None):
+        # check_type(personId, basestring)
+        params = dict(orgId=orgId)
+        put_data = dict_from_items_with_values(
+            caller_id=caller_id)
+        # exit(put_data)
+
+        # API request
+        json_data = self._session.put(API_ENDPOINT + '/' + personId + '/features/callerId',
+                                      params=params, json=caller_id, erc=204)
+
+        # Return a person object created from the returned JSON object
+        return "Success"
+
+
+    def update_recording(self, personId, recording=None, orgId=None):
+        # check_type(personId, basestring)
+        params = dict(orgId=orgId)
+        put_data = dict_from_items_with_values(
+            caller_id=recording)
+
+        # API request
+        json_data = self._session.put(API_ENDPOINT + '/' + personId + '/features/callRecording',
+                                      params=params, json=recording, erc=204)
+
+        # Return a person object created from the returned JSON object
+        return "Success"
 
     def delete(self, personId):
         """Remove a person from the system.
