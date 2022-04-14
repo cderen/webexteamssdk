@@ -166,7 +166,7 @@ def user_agent(be_geo_id=None, caller=None):
         comment=json.dumps(data),
     )
 
-    logger.info("User-Agent: " + user_agent_string)
+    logger.debug("User-Agent: " + user_agent_string)
 
     return user_agent_string
 
@@ -322,6 +322,7 @@ class RestSession(object):
             return url
 
     def request(self, method, url, erc, **kwargs):
+        #print(method, url, erc, kwargs)
         """Abstract base method for making requests to the Webex Teams APIs.
 
         This base method:
@@ -351,6 +352,7 @@ class RestSession(object):
         while True:
             # Make the HTTP request to the API endpoint
             response = self._req_session.request(method, abs_url, **kwargs)
+            #print(abs_url, kwargs)
 
             try:
                 # Check the response code for error conditions
@@ -436,7 +438,8 @@ class RestSession(object):
             else:
                 break
 
-    def get_items(self, url, params=None, **kwargs):
+    def get_items(self, url, params=None, items = "items" , **kwargs):
+        #print(url)
         """Return a generator that GETs and yields individual JSON `items`.
 
         Yields individual `items` from Webex Teams"s top-level {"items": [...]}
@@ -447,6 +450,8 @@ class RestSession(object):
         Args:
             url(basestring): The URL of the API endpoint.
             params(dict): The parameters for the HTTP GET request.
+            items: expected dict key for returned API envelope, legacy uses "items", but telephony
+                    APIs for some reason use others, i.e. autoAttendants
             **kwargs:
                 erc(int): The expected (success) response code for the request.
                 others: Passed on to the requests package.
@@ -464,7 +469,8 @@ class RestSession(object):
         for json_page in pages:
             assert isinstance(json_page, dict)
 
-            items = json_page.get("items")
+            # telephony objects are returned as i.e. autoAttendants instead of items
+            items = json_page.get(items)# or json_page.get("autoAttendants")
 
             if items is None:
                 error_message = "'items' key not found in JSON data: " \
