@@ -33,6 +33,7 @@ from __future__ import (
 
 RESPONSE_CODES = {
     200: "Successful request with body content.",
+    201: "Successful create request.",
     204: "Successful request without body content.",
     400: "The request was invalid or cannot be otherwise served.",
     401: "Authentication credentials were missing or incorrect.",

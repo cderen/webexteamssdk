@@ -353,6 +353,7 @@ class RestSession(object):
             # Make the HTTP request to the API endpoint
             response = self._req_session.request(method, abs_url, **kwargs)
             #print(abs_url, kwargs)
+            # print(response)  # see what response code specific API reponds with
 
             try:
                 # Check the response code for error conditions
@@ -504,6 +505,7 @@ class RestSession(object):
 
         response = self.request("POST", url, erc, json=json, data=data,
                                 **kwargs)
+
         return extract_and_parse_json(response)
 
     def put(self, url, json=None, data=None, **kwargs):

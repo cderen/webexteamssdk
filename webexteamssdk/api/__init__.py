@@ -52,6 +52,7 @@ from .team_memberships import TeamMembershipsAPI
 from .teams import TeamsAPI
 from .webhooks import WebhooksAPI
 from .telephony import TelephonyAPI
+from .skills import SkillsAPI
 import os
 
 
@@ -224,6 +225,7 @@ class WebexTeamsAPI(object):
         )
         self.webhooks = WebhooksAPI(self._session, object_factory)
         self.telephony = TelephonyAPI(self._session, object_factory)
+        self.skills = SkillsAPI(self._session, object_factory)
 
     @property
     def access_token(self):

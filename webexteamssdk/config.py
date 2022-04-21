@@ -25,6 +25,7 @@ SOFTWARE.
 
 # Package Constants
 DEFAULT_BASE_URL = "https://webexapis.com/v1/"
+#DEFAULT_BASE_URL = "https://api.wxcc-us1.cisco.com/"
 
 DEFAULT_SINGLE_REQUEST_TIMEOUT = 60
 
