@@ -353,8 +353,7 @@ class RestSession(object):
             # Make the HTTP request to the API endpoint
             response = self._req_session.request(method, abs_url, **kwargs)
             #print(abs_url, kwargs)
-            # print(response)  # see what response code specific API reponds with
-
+            #print(response)  # see what response code specific API reponds with
             try:
                 # Check the response code for error conditions
                 check_response_code(response, erc)
@@ -480,7 +479,22 @@ class RestSession(object):
 
             else:
                 for item in items:
+                    #print(item)
                     yield item
+
+
+    def get_items_list(self, url, params=None, **kwargs):
+        """Created for webex contact center list methods, i.e. entry-point
+        """
+        # Get generator for pages of JSON data
+        pages = self.get_pages(url, params=params, **kwargs)
+
+        for json_page in pages:
+            assert isinstance(json_page, list)
+
+            for item in json_page:
+                yield item
+
 
     def post(self, url, json=None, data=None, **kwargs):
         """Sends a POST request.
