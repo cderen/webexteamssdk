@@ -53,6 +53,7 @@ from .teams import TeamsAPI
 from .webhooks import WebhooksAPI
 from .telephony import TelephonyAPI
 from .contactcenter import ContactCenterAPI
+from .csdm import csdmAPI
 import os
 
 
@@ -226,6 +227,7 @@ class WebexTeamsAPI(object):
         self.webhooks = WebhooksAPI(self._session, object_factory)
         self.telephony = TelephonyAPI(self._session, object_factory)
         self.contactcenter = ContactCenterAPI(self._session, object_factory)
+        self.csdm = csdmAPI(self._session, object_factory)
 
     @property
     def access_token(self):

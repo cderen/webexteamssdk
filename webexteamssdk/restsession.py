@@ -470,7 +470,10 @@ class RestSession(object):
             assert isinstance(json_page, dict)
 
             # telephony objects are returned as i.e. autoAttendants instead of items
-            items = json_page.get(items)# or json_page.get("autoAttendants")
+            try:
+                items = json_page.get(items)# or json_page.get("autoAttendants")
+            except TypeError:
+                pass  # got TypeError: unhashable type: 'list'
 
             if items is None:
                 error_message = "'items' key not found in JSON data: " \
@@ -521,6 +524,21 @@ class RestSession(object):
                                 **kwargs)
 
         return extract_and_parse_json(response)
+
+    def post_test(self, url, json=None, data=None, **kwargs):
+        check_type(url, basestring)
+
+        # Expected response code
+        erc = kwargs.pop("erc", EXPECTED_RESPONSE_CODE["POST"])
+
+        response = self.request("POST", url, erc, json=json, data=data,
+                                **kwargs)
+        res_dic = extract_and_parse_json(response)
+        for hit in res_dic["hits"]["hits"]:
+            yield hit
+
+        return extract_and_parse_json(response)
+
 
     def put(self, url, json=None, data=None, **kwargs):
         """Sends a PUT request.

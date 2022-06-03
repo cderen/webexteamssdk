@@ -13,29 +13,43 @@ from ..utils import (
 OBJECT_TYPE = ''
 
 
-class ContactCenterAPI(object):
+class csdmAPI(object):
     def __init__(self, session, object_factory):
         check_type(session, RestSession)
-        super(ContactCenterAPI, self).__init__()
+        super(csdmAPI, self).__init__()
         self._session = session
         self._object_factory = object_factory
 
 
-    @generator_container
-    def list_feature(self, orgId=None, feature=None, type=None, **request_parameters):
+    def get(self, orgId=None, feature=None, device_id=None):
+        # API request
+        json_data = self._session.get(f"/csdm/api/v1/organization/{orgId}/{feature}/{device_id}")
+
+        return self._object_factory(OBJECT_TYPE, json_data)
+
+    #@generator_container
+    def list(self, orgId=None, feature=None):
         check_type(orgId, basestring, optional=True)
+        payload = {"query": None,
+                    "aggregates": ["connectionStatus",
+                                   "category",
+                                   "callingType"
+                                   ],
+                    "size": 100,
+                    "from": 0,
+                    "sortField": "category",
+                    "sortOrder": "asc",
+                    "initial": True,
+                    "translatedQueryString": ""
+                    }
 
-        params = dict_from_items_with_values(
-            request_parameters,
-            orgId=orgId,
-            type=type
-        )
-        items = self._session.get_items(f"/organization/{orgId}/{feature}", params=params, items="data")
+        #items = self._session.get_items(f"/csdm/api/v1/organization/{orgId}/{feature}", items="hits")#, params=None, items=None)
+        items = self._session.post_test(f"/csdm/api/v1/organization/{orgId}/{feature}", json=payload)
+                                        #items="hits")  # , params=None, items=None)
 
-        # Yield person objects created from the returned items JSON objects
         for item in items:
-            # yield self._object_factory(OBJECT_TYPE, item)
-            yield item
+            yield self._object_factory(OBJECT_TYPE, item)
+            #yield item
 
     @generator_container
     def list_feature_list(self, orgId=None, feature=None, type=None, **request_parameters):
@@ -54,24 +68,6 @@ class ContactCenterAPI(object):
             yield item
 
 
-    @generator_container
-    def list_queues(self, orgId=None, feature=None, type=None, **request_parameters):
-        check_type(orgId, basestring, optional=True)
-
-        params = dict_from_items_with_values(
-            request_parameters,
-            orgId=orgId,
-            type=type
-        )
-        items = self._session.get_items(f"/organization/{orgId}/{feature}", params=params, items="resources")
-
-        # Yield person objects created from the returned items JSON objects
-        for item in items:
-            # yield self._object_factory(OBJECT_TYPE, item)
-            yield item
-
-    def get_feature(self, orgId=None, feature=None, id=None):
-        return self._session.get(f"/organization/{orgId}/{feature}/{id}")
 
 
     def create_feature(self, orgId=None, feature=None, payload=None):

@@ -45,8 +45,7 @@ RESPONSE_CODES = {
     405: "The request was made to a resource using an HTTP request method "
          "that is not supported.",
     409: "The request could not be processed because it conflicts with some "
-         "established rule of the system. For example, a person may not be "
-         "added to a room more than once.",
+         "established rule of the system. For example a duplicate entry",
     410: "The requested resource is no longer available.",
     415: "The request was made to a resource without specifying a media type "
          "or used a media type that is not supported.",
