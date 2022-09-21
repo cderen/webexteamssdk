@@ -108,6 +108,10 @@ class ApiError(webexteamssdkException):
                             if self.tracking_id else "",
             )
         )
+        try:
+            self.detail_error_message = self.details.get("error")[0]["message"][0]["description"]
+        except:
+            self.detail_error_message = None
 
         super(ApiError, self).__init__(self.error_message)
 

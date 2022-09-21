@@ -110,3 +110,50 @@ class LocationsAPI(object):
         # Yield organization objects created from the returned JSON objects
         for item in items:
             yield self._object_factory(OBJECT_TYPE, item)
+
+    def create(self, **request_parameters):
+        # check_type(name, basestring, optional=False)
+        # check_type(orgId, basestring, optional=True)
+        # check_type(time_zone, basestring, optional=False)
+        # check_type(lang, basestring, optional=False)
+        # check_type(announcement, basestring, optional=False)
+        # #check_type(address, basestring, optional=False)
+
+        post_data = dict_from_items_with_values(
+            name = request_parameters['name'],
+            timeZone=request_parameters['time_zone'],
+            preferredLanguage=request_parameters['lang'],
+            announcementLanguage=request_parameters['announcement'],
+            address=request_parameters['address'],
+        )
+
+
+        # API request
+        json_data = self._session.post(API_ENDPOINT, json=post_data, erc=201)
+
+        # Return a person object created from the returned JSON object
+        return self._object_factory(OBJECT_TYPE, json_data)
+
+    def update(self, location_id, **request_parameters):
+        check_type(location_id, basestring, optional=False)
+        # check_type(orgId, basestring, optional=True)
+        # check_type(time_zone, basestring, optional=False)
+        # check_type(lang, basestring, optional=False)
+        # check_type(announcement, basestring, optional=False)
+        # #check_type(address, basestring, optional=False)
+
+        post_data = dict_from_items_with_values(
+            name = request_parameters['name'],
+            timeZone=request_parameters['time_zone'],
+            preferredLanguage=request_parameters['lang'],
+            announcementLanguage=request_parameters['announcement'],
+            address=request_parameters['address'],
+        )
+
+
+        # API request
+        #json_data = self._session.post(API_ENDPOINT, json=post_data, erc=201)
+        json_data = self._session.put(API_ENDPOINT + '/' + location_id, json=post_data, erc=204)
+
+        # Return a person object created from the returned JSON object
+        return "Success"

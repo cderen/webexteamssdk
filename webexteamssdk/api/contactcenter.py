@@ -30,7 +30,7 @@ class ContactCenterAPI(object):
             orgId=orgId,
             type=type
         )
-        items = self._session.get_items(f"/organization/{orgId}/{feature}", params=params, items="data")
+        items = self._session.get_items(f"/organization/{orgId}/{feature}", params=params, items_param="data")
 
         # Yield person objects created from the returned items JSON objects
         for item in items:
@@ -63,7 +63,7 @@ class ContactCenterAPI(object):
             orgId=orgId,
             type=type
         )
-        items = self._session.get_items(f"/organization/{orgId}/{feature}", params=params, items="resources")
+        items = self._session.get_items(f"/organization/{orgId}/{feature}", params=params, items_param="resources")
 
         # Yield person objects created from the returned items JSON objects
         for item in items:

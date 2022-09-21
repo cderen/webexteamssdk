@@ -132,8 +132,7 @@ class WorkspacesAPI(object):
         check_type(orgId, basestring, optional=True)
         check_type(locationId, basestring, optional=True)
         check_type(roles, list, optional=True)
-        check_type(licenses, list, optional=True)
-        check_type(callingData, bool, optional=True)'''
+        check_type(licenses, list, optional=True)'''
 
         post_data = dict_from_items_with_values(
             request_parameters,
@@ -151,12 +150,12 @@ class WorkspacesAPI(object):
 
 
         # API request
-        json_data = self._session.post(API_ENDPOINT, json=post_data)
+        json_data = self._session.post(API_ENDPOINT, json=post_data, erc=201)
 
         # Return a person object created from the returned JSON object
         return self._object_factory(OBJECT_TYPE, json_data)
 
-    '''def get(self, personId, callingData=False):
+    def get(self, workspace_id):
         """Get a person's details, by ID.
 
         Args:
@@ -170,62 +169,18 @@ class WorkspacesAPI(object):
             ApiError: If the Webex Teams cloud returns an error.
 
         """
-        check_type(personId, basestring)
+        check_type(workspace_id, basestring)
 
         # API request
-        json_data = self._session.get(API_ENDPOINT + '/' + personId + '?callingData=' + str(callingData))
+        json_data = self._session.get(API_ENDPOINT + '/' + workspace_id)
 
         # Return a person object created from the response JSON data
-        return self._object_factory(OBJECT_TYPE, json_data)
+        #return self._object_factory(OBJECT_TYPE, json_data)
+        return json_data
 
-    def get_voicemail(self, personId):
-        """Get a person's voicemail details, by ID.
 
-        Args:
-            personId(basestring): The ID of the person to be retrieved.
-
-        Returns:
-            Person: A Person object with the details of the requested person.
-
-        Raises:
-            TypeError: If the parameter types are incorrect.
-            ApiError: If the Webex Teams cloud returns an error.
-
-        """
-        check_type(personId, basestring)
-
-        # API request
-        #url = f"https://webexapis.com/v1/people/{person_id}/features/voicemail?orgId={org_id}"
-        json_data = self._session.get(API_ENDPOINT + '/' + personId + '/features/voicemail')
-
-        # Return a person object created from the response JSON data
-        return self._object_factory(OBJECT_TYPE, json_data)
-
-    def get_forwarding(self, personId):
-        """Get a person's voicemail details, by ID.
-
-        Args:
-            personId(basestring): The ID of the person to be retrieved.
-
-        Returns:
-            Person: A Person object with the details of the requested person.
-
-        Raises:
-            TypeError: If the parameter types are incorrect.
-            ApiError: If the Webex Teams cloud returns an error.
-
-        """
-        check_type(personId, basestring)
-
-        # API request
-        json_data = self._session.get(API_ENDPOINT + '/' + personId + '/features/callForwarding')
-
-        # Return a person object created from the response JSON data
-        return self._object_factory(OBJECT_TYPE, json_data)
-
-    def update(self, personId, emails=None, displayName=None, firstName=None,
-               lastName=None, avatar=None, orgId=None, roles=None, callingData=False,
-               licenses=None, locationId=None, **request_parameters):
+    def update(self, workspaceId=None, orgId=None, workspaceLocationId=None, floorId=None, displayName=None, capacity=None,
+             type=None, start=None, calling=None, calendar=None, max=None, **request_parameters):
         """Update details for a person, by ID.
 
         Only an admin can update a person's details.
@@ -262,43 +217,40 @@ class WorkspacesAPI(object):
             ApiError: If the Webex Teams cloud returns an error.
 
         """
-        check_type(emails, list, optional=True)
-        check_type(displayName, basestring, optional=True)
-        check_type(firstName, basestring, optional=True)
-        check_type(lastName, basestring, optional=True)
-        check_type(avatar, basestring, optional=True)
-        check_type(orgId, basestring, optional=True)
-        check_type(locationId, basestring, optional=True)
-        check_type(roles, list, optional=True)
-        check_type(licenses, list, optional=True)
-        check_type(callingData, bool, optional=True)
+        # check_type(emails, list, optional=True)
+        # check_type(displayName, basestring, optional=True)
+        # check_type(firstName, basestring, optional=True)
+        # check_type(lastName, basestring, optional=True)
+        # check_type(avatar, basestring, optional=True)
+        # check_type(orgId, basestring, optional=True)
+        # check_type(locationId, basestring, optional=True)
+        # check_type(roles, list, optional=True)
+        # check_type(licenses, list, optional=True)
+        # check_type(callingData, bool, optional=True)
 
         put_data = dict_from_items_with_values(
             request_parameters,
-            emails=emails,
-            displayName=displayName,
-            firstName=firstName,
-            lastName=lastName,
-            avatar=avatar,
             orgId=orgId,
-            locationId=locationId,
-            roles=roles,
-            licenses=licenses,
+            workspaceLocationId=workspaceLocationId,
+            floorId=floorId,
+            displayName=displayName,
+            capacity=capacity,
+            type=type,
+            start=start,
+            calling=calling,
+            calendar=calendar,
+            max=max
         )
-        #print('XXX', locationId, callingData)
-        params = dict(callingData=callingData)
-
 
         # API request
-        json_data = self._session.put(API_ENDPOINT + '/' + personId,
-                                      params=params, json=put_data)
+        json_data = self._session.put(API_ENDPOINT + '/' + workspaceId, json=put_data)
 
         # Return a person object created from the returned JSON object
         return self._object_factory(OBJECT_TYPE, json_data)
 
 
 
-    def delete(self, personId):
+    def delete(self, workspaceId):
         """Remove a person from the system.
 
         Only an admin can remove a person.
@@ -311,20 +263,7 @@ class WorkspacesAPI(object):
             ApiError: If the Webex Teams cloud returns an error.
 
         """
-        check_type(personId, basestring)
+        check_type(workspaceId, basestring)
 
         # API request
-        self._session.delete(API_ENDPOINT + '/' + personId)
-
-    def me(self):
-        """Get the details of the person accessing the API.
-
-        Raises:
-            ApiError: If the Webex Teams cloud returns an error.
-
-        """
-        # API request
-        json_data = self._session.get(API_ENDPOINT + '/me')
-
-        # Return a person object created from the response JSON data
-        return self._object_factory(OBJECT_TYPE, json_data)'''
+        self._session.delete(API_ENDPOINT + '/' + workspaceId)

@@ -77,7 +77,7 @@ class TelephonyAPI(object):
             max=max,
         )
         # API request - get items, define items key as autoAttendants, since Cisco decided to change that on us
-        items = self._session.get_items(API_ENDPOINT  + "/config/autoAttendants", params=params, items="autoAttendants")
+        items = self._session.get_items(API_ENDPOINT  + "/config/autoAttendants", params=params, items_param="autoAttendants")
 
         # Yield person objects created from the returned items JSON objects
         for item in items:
@@ -103,7 +103,6 @@ class TelephonyAPI(object):
 
         # Return a person object created from the response JSON data
         return self._object_factory(OBJECT_TYPE, json_data)
-
 
 
     def create(self, emails, displayName=None, firstName=None, lastName=None,
@@ -142,8 +141,6 @@ class TelephonyAPI(object):
 
         # Return a person object created from the returned JSON object
         return self._object_factory(OBJECT_TYPE, json_data)
-
-
 
 
     def delete(self, personId):
@@ -192,7 +189,7 @@ class TelephonyAPI(object):
             max=max,
         )
         # API request - get items, define items key as autoAttendants, since Cisco decided to change that on us
-        items = self._session.get_items(API_ENDPOINT  + "/config/huntGroups", params=params, items="huntGroups")
+        items = self._session.get_items(API_ENDPOINT  + "/config/huntGroups", params=params, items_param="huntGroups")
 
         # Yield person objects created from the returned items JSON objects
         for item in items:
@@ -218,3 +215,26 @@ class TelephonyAPI(object):
 
         # Return a person object created from the response JSON data
         return self._object_factory(OBJECT_TYPE, json_data)
+
+    #@generator_container
+    def get_numbers(self, locationId=None, orgId=None,  **request_parameters):
+        """
+        """
+        #check_type(locationId, basestring)
+        #check_type(phoneNumber, basestring)
+        #check_type(orgId, basestring, optional=True)
+
+        params = dict_from_items_with_values(
+            request_parameters,
+            orgId=orgId,
+        )
+
+        # API request
+        items = self._session.get_items(API_ENDPOINT + "/config/numbers", params=params, items_param="phoneNumbers")
+        #items = self._session.get(API_ENDPOINT + "/config/numbers",
+        #                                params=params)
+
+
+        # Yield person objects created from the returned items JSON objects
+        for item in items:
+            yield self._object_factory(OBJECT_TYPE, item)

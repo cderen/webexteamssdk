@@ -438,7 +438,7 @@ class RestSession(object):
             else:
                 break
 
-    def get_items(self, url, params=None, items = "items" , **kwargs):
+    def get_items(self, url, params=None, items_param = "items" , **kwargs):
         #print(url)
         """Return a generator that GETs and yields individual JSON `items`.
 
@@ -471,7 +471,7 @@ class RestSession(object):
 
             # telephony objects are returned as i.e. autoAttendants instead of items
             try:
-                items = json_page.get(items)# or json_page.get("autoAttendants")
+                items = json_page.get(items_param)# or json_page.get("autoAttendants")
             except TypeError:
                 pass  # got TypeError: unhashable type: 'list'
 
@@ -483,6 +483,7 @@ class RestSession(object):
             else:
                 for item in items:
                     #print(item)
+                    #print("rest - ", item)
                     yield item
 
 
@@ -561,8 +562,7 @@ class RestSession(object):
         # Expected response code
         erc = kwargs.pop("erc", EXPECTED_RESPONSE_CODE["PUT"])
 
-        response = self.request("PUT", url, erc, json=json, data=data,
-                                **kwargs)
+        response = self.request("PUT", url, erc, json=json, data=data, **kwargs)
 
         if erc == 204:
             return "204 Successful"
